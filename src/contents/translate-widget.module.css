@@ -1,5 +1,5 @@
 .icon {
-    position: absolute;
+    position: fixed;
     width: 28px;
     height: 28px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -17,7 +17,7 @@
 }
 
 .card {
-    position: absolute;
+    position: fixed;
     min-width: 200px;
     max-width: 320px;
     background: #ffffff;

@@ -2,86 +2,47 @@ import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 import { translate } from "../../services/reverso"
 import { getFromLang, getToLang } from "../../services/storage"
+import type { TranslateRequest, TranslateResponse } from "../../types"
 import { MAX_TEXT_LENGTH } from "../../utils/constants"
 
-interface TranslationRequestBody {
-  text: string
-  fromLang?: string
-  toLang?: string
-}
-
-interface TranslationResponseBody {
-  translatedText: string
-}
-
-interface ErrorResponseBody {
-  error: string
-}
-
-type HandlerRequest = PlasmoMessaging.Request<
-  "translate",
-  TranslationRequestBody
->
-type HandlerResponse = PlasmoMessaging.Response<
-  TranslationResponseBody | ErrorResponseBody
->
+type HandlerRequest = PlasmoMessaging.Request<"translate", TranslateRequest>
+type HandlerResponse = PlasmoMessaging.Response<TranslateResponse>
 
 const handler: PlasmoMessaging.MessageHandler<
-  TranslationRequestBody,
-  TranslationResponseBody | ErrorResponseBody
+    TranslateRequest,
+    TranslateResponse
 > = async (request: HandlerRequest, response: HandlerResponse) => {
-  const { text, fromLang, toLang } = request.body ?? {}
+    const { text, fromLang, toLang } = request.body ?? {}
 
-  if (!text || typeof text !== "string") {
-    response.send({ error: "El texto no puede estar vacío" })
-    return
-  }
-
-  const trimmedText = text.trim()
-
-  if (trimmedText.length === 0) {
-    response.send({ error: "El texto no puede estar vacío" })
-    return
-  }
-
-  if (trimmedText.length > MAX_TEXT_LENGTH) {
-    response.send({
-      error: `El texto excede el límite de ${MAX_TEXT_LENGTH} caracteres`
-    })
-    return
-  }
-
-  try {
-    const from = fromLang ?? (await getFromLang())
-    const to = toLang ?? (await getToLang())
-
-    const translatedText = await translate(trimmedText, from, to)
-
-    response.send({ translatedText })
-  } catch (error) {
-    console.error("Background: Translation error", error)
-
-    if (
-      error instanceof Error &&
-      (error.name === "ReversoNetworkError" ||
-        error.message.includes("Failed to connect"))
-    ) {
-      response.send({ error: "Sin conexión" })
-      return
+    if (!text || typeof text !== "string") {
+        response.send({ error: "El texto no puede estar vacío" })
+        return
     }
 
-    if (error instanceof Error && error.name === "ReversoEmptyResponseError") {
-      response.send({ error: "Error de traducción" })
-      return
+    const trimmedText = text.trim()
+
+    if (trimmedText.length === 0) {
+        response.send({ error: "El texto no puede estar vacío" })
+        return
     }
 
-    if (error instanceof Error && error.name === "ReversoTranslationError") {
-      response.send({ error: "Error de traducción" })
-      return
+    if (trimmedText.length > MAX_TEXT_LENGTH) {
+        response.send({
+            error: `El texto excede el límite de ${MAX_TEXT_LENGTH} caracteres`
+        })
+        return
     }
 
-    response.send({ error: "Error de traducción" })
-  }
+    try {
+        const from = fromLang ?? (await getFromLang())
+        const to = toLang ?? (await getToLang())
+
+        const translatedText = await translate(trimmedText, from, to)
+        response.send({ translatedText })
+    } catch (error) {
+        console.error("Background: Translation error", error)
+        response.send({ error: "Error de traducción" })
+    }
 }
 
 export default handler

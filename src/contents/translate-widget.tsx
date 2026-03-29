@@ -20,12 +20,6 @@ export const config: PlasmoCSConfig = {
 
 export const getShadowHostId = () => "st-translate-host"
 
-export const getStyle = () => {
-    const style = document.createElement("style")
-    style.textContent = styles
-    return style
-}
-
 interface TranslateWidgetProps {
     onClose?: () => void
 }
@@ -62,7 +56,6 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
         setTranslatedText("Translating...")
 
         try {
-            const truncated = selectedText.length > MAX_TEXT_LENGTH
             const textToTranslate = truncateText(selectedText, MAX_TEXT_LENGTH)
 
             const response = await sendToBackground<
@@ -70,21 +63,14 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
                 TranslateResponse
             >({
                 name: "translate",
-                body: {
-                    text: textToTranslate,
-                    fromLang: "spa",
-                    toLang: "eng"
-                }
+                body: { text: textToTranslate }
             })
 
             if (response.error) {
                 setError(response.error)
                 setTranslatedText("Error de traducción")
             } else {
-                const finalText = truncated
-                    ? `${response.translatedText} (truncado)`
-                    : response.translatedText || ""
-                setTranslatedText(finalText)
+                setTranslatedText(response.translatedText || "")
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : "Unknown error")
@@ -106,7 +92,6 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
         const handleSelectionChange = () => {
             const selection = getSelectionInfo()
             const range = getSelectionRange()
-            console.log("Handle selection!!", selection)
 
             if (selection.text && range) {
                 setSelectedText(selection.text)
@@ -126,6 +111,25 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
             )
         }
     }, [])
+
+    useEffect(() => {
+        if (!isIconVisible) return
+
+        let rafId: number | null = null
+        const handleScroll = () => {
+            if (rafId) cancelAnimationFrame(rafId)
+            rafId = requestAnimationFrame(() => {
+                // Force re-render to recalculate getBoundingClientRect()
+                setSelectionRange((prev) => (prev ? prev.cloneRange() : null))
+            })
+        }
+
+        window.addEventListener("scroll", handleScroll, { passive: true })
+        return () => {
+            window.removeEventListener("scroll", handleScroll)
+            if (rafId) cancelAnimationFrame(rafId)
+        }
+    }, [isIconVisible])
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -172,10 +176,12 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
     const getIconPosition = () => {
         if (!selectionRange) return { left: 0, top: 0 }
 
+        console.log("SelectionRage: ", selectionRange)
+
         const rect = selectionRange.getBoundingClientRect()
         return {
-            left: rect.right + window.scrollX,
-            top: rect.bottom + window.scrollY
+            left: rect.right,
+            top: rect.bottom
         }
     }
 
@@ -186,8 +192,8 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
         const iconSize = 36
         const gap = 8
 
-        const iconX = rect.right + window.scrollX
-        const iconY = rect.bottom + window.scrollY + iconSize / 2
+        const iconX = rect.right
+        const iconY = rect.bottom + iconSize / 2
 
         const cardWidth = 280
         const cardHeight = 120
@@ -220,7 +226,7 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
                 8,
                 Math.min(iconX - cardWidth / 2, viewportWidth - cardWidth - 8)
             )
-            top = Math.max(8, rect.bottom + window.scrollY + iconSize + gap)
+            top = Math.max(8, rect.bottom + iconSize + gap)
         }
 
         left = Math.max(8, Math.min(left, viewportWidth - cardWidth - 8))
@@ -263,9 +269,7 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
                 </button>
 
                 <div className={styles.originalText}>
-                    {selectedText.length > MAX_TEXT_LENGTH
-                        ? `${selectedText.slice(0, MAX_TEXT_LENGTH)}...`
-                        : selectedText}
+                    {truncateText(selectedText, MAX_TEXT_LENGTH)}
                 </div>
 
                 <div className={styles.divider} />
