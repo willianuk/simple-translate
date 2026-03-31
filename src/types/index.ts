@@ -2,6 +2,18 @@ export interface SelectionInfo {
     text: string
 }
 
+export interface TextSegment {
+    text: string
+    type:
+        | "line"
+        | "paragraph-break"
+        | "button"
+        | "heading"
+        | "paragraph"
+        | "text"
+    index: number
+}
+
 // Reverso API types
 export interface ReversoRequestBody {
     input: string

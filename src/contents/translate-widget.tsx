@@ -4,11 +4,12 @@ import { useCallback, useEffect, useState } from "react"
 
 import { sendToBackground } from "@plasmohq/messaging"
 
-import type { TranslateRequest, TranslateResponse } from "../types"
+import type { TextSegment, TranslateRequest, TranslateResponse } from "../types"
 import { MAX_TEXT_LENGTH } from "../utils/constants"
 import {
     getSelectionInfo,
     getSelectionRange,
+    getSelectionSegments,
     isOffline,
     truncateText
 } from "../utils/dom"
@@ -37,6 +38,8 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
     const [selectedText, setSelectedText] = useState("")
     const [selectionRange, setSelectionRange] = useState<Range | null>(null)
     const [translatedText, setTranslatedText] = useState("")
+    const [textSegments, setTextSegments] = useState<TextSegment[]>([])
+    const [translatedSegments, setTranslatedSegments] = useState<string[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
@@ -53,6 +56,7 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
 
         if (isOffline()) {
             setTranslatedText("Sin conexión")
+            setTranslatedSegments([])
             setError(null)
             setIsLoading(false)
             return
@@ -61,29 +65,68 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
         setIsLoading(true)
         setError(null)
         setTranslatedText("Translating...")
+        setTranslatedSegments([])
 
         try {
-            const textToTranslate = truncateText(selectedText, MAX_TEXT_LENGTH)
+            const segments = getSelectionSegments()
+            const DELIMITER = "§"
 
-            console.log("Contents texttotranslate: ", textToTranslate)
+            if (segments.length > 1) {
+                const validSegments = segments.filter((s) => s.text.trim())
+                const combinedText = validSegments
+                    .map((s) => s.text)
+                    .join(` ${DELIMITER} `)
 
-            const response = await sendToBackground<
-                TranslateRequest,
-                TranslateResponse
-            >({
-                name: "translate",
-                body: { text: textToTranslate }
-            })
+                const response = await sendToBackground<
+                    TranslateRequest,
+                    TranslateResponse
+                >({
+                    name: "translate",
+                    body: { text: combinedText }
+                })
 
-            if (response.error) {
-                setError(response.error)
-                setTranslatedText("Error de traducción")
+                if (response.error) {
+                    setError(response.error)
+                    setTranslatedText("Error de traducción")
+                    setTextSegments([])
+                    setTranslatedSegments([])
+                } else {
+                    const translatedParts = (response.translatedText || "")
+                        .split(DELIMITER)
+                        .map((part) => part.trim())
+
+                    setTextSegments(validSegments)
+                    setTranslatedSegments(translatedParts)
+                    setTranslatedText("")
+                }
             } else {
-                setTranslatedText(response.translatedText || "")
+                const textToTranslate = truncateText(
+                    selectedText,
+                    MAX_TEXT_LENGTH
+                )
+
+                const response = await sendToBackground<
+                    TranslateRequest,
+                    TranslateResponse
+                >({
+                    name: "translate",
+                    body: { text: textToTranslate }
+                })
+
+                if (response.error) {
+                    setError(response.error)
+                    setTranslatedText("Error de traducción")
+                } else {
+                    setTranslatedText(response.translatedText || "")
+                }
+
+                setTextSegments([])
+                setTranslatedSegments([])
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : "Unknown error")
             setTranslatedText("Error de traducción")
+            setTranslatedSegments([])
         } finally {
             setIsLoading(false)
         }
@@ -273,16 +316,38 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
                     display: isCardVisible ? "block" : "none",
                     pointerEvents: isCardVisible ? "auto" : "none"
                 }}>
-                {/*<button className={styles.closeBtn} onClick={handleClose}>
-                    ×
-                </button>*/}
+                {isLoading ? (
+                    <div className={styles.loadingContainer}>
+                        <div className={styles.loadingSpinner}></div>
+                        <div className={styles.loadingText}>Translating...</div>
+                    </div>
+                ) : (
+                    <>
+                        {translatedSegments.length > 0 ? (
+                            <div className={styles.segmentsContainer}>
+                                {translatedSegments.map((segment, index) => {
+                                    const originalSegment = textSegments[index]
+                                    const segmentType = originalSegment?.type
 
-                <div
-                    className={`${styles.translatedText} ${error ? styles.error : ""}`}>
-                    {isLoading
-                        ? "Translating..."
-                        : translatedText || "Error de traducción"}
-                </div>
+                                    return (
+                                        <div
+                                            key={index}
+                                            className={`${styles.segment} ${styles[segmentType] || ""}`}>
+                                            <div className={styles.segmentText}>
+                                                {segment}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        ) : (
+                            <div
+                                className={`${styles.translatedText} ${error ? styles.error : ""}`}>
+                                {translatedText || "Error de traducción"}
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
         </>
     )

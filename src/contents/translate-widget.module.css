@@ -58,7 +58,7 @@
 }
 
 .originalText {
-    padding: 32px 12px 12px 12px;
+    padding: 12px;
     color: #333;
     word-wrap: break-word;
 }
@@ -70,7 +70,7 @@
 }
 
 .translatedText {
-    padding: 32px 12px 12px 12px;
+    padding: 12px;
     color: #667eea;
     font-weight: 500;
     word-wrap: break-word;
@@ -78,4 +78,91 @@
 
 .translatedText.error {
     color: #e53e3e;
+}
+
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 12px;
+    gap: 12px;
+}
+
+.loadingSpinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e0e0e0;
+    border-top: 2px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loadingText {
+    color: #666;
+    font-size: 12px;
+}
+
+.segmentsContainer {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.segment {
+    padding: 10px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 3px solid #667eea;
+    color: #333;
+    word-wrap: break-word;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.segment.button {
+    border-left-color: #48bb78;
+    background: #f0fff4;
+}
+
+.segment.heading {
+    border-left-color: #805ad5;
+    background: #faf5ff;
+    font-weight: 600;
+}
+
+.segment.paragraph {
+    border-left-color: #4299e1;
+    background: #ebf8ff;
+}
+
+.segment.text {
+    border-left-color: #718096;
+    background: #f7fafc;
+}
+
+.segmentLabel {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #718096;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+
+.segmentText {
+    color: #2d3748;
 }
