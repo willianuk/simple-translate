@@ -3,11 +3,12 @@ import type { SelectionInfo } from "./../types"
 export function getSelectionInfo(): SelectionInfo {
     const selection = window.getSelection()
 
-    if (!selection || selection.isCollapsed) {
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
         return { text: "" }
     }
 
-    const text = selection.toString().trim()
+    const range = selection.getRangeAt(0)
+    const text = range.toString().trim()
     return text.length > 0 ? { text } : { text: "" }
 }
 

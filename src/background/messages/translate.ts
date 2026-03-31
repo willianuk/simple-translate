@@ -37,6 +37,8 @@ const handler: PlasmoMessaging.MessageHandler<
         const from = fromLang ?? (await getFromLang())
         const to = toLang ?? (await getToLang())
 
+        console.log("Backgound trimed text: ", trimmedText)
+
         const translatedText = await translate(trimmedText, from, to)
         response.send({ translatedText })
     } catch (error) {

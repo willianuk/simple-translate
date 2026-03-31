@@ -1,4 +1,5 @@
-import type { PlasmoCSConfig } from "plasmo"
+import styleText from "data-text:./translate-widget.module.css"
+import type { PlasmoCSConfig, PlasmoGetStyle } from "plasmo"
 import { useCallback, useEffect, useState } from "react"
 
 import { sendToBackground } from "@plasmohq/messaging"
@@ -19,6 +20,12 @@ export const config: PlasmoCSConfig = {
 }
 
 export const getShadowHostId = () => "st-translate-host"
+
+export const getStyle: PlasmoGetStyle = () => {
+    const style = document.createElement("style")
+    style.textContent = styleText
+    return style
+}
 
 interface TranslateWidgetProps {
     onClose?: () => void
@@ -57,6 +64,8 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
 
         try {
             const textToTranslate = truncateText(selectedText, MAX_TEXT_LENGTH)
+
+            console.log("Contents texttotranslate: ", textToTranslate)
 
             const response = await sendToBackground<
                 TranslateRequest,
@@ -176,7 +185,7 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
     const getIconPosition = () => {
         if (!selectionRange) return { left: 0, top: 0 }
 
-        console.log("SelectionRage: ", selectionRange)
+        // console.log("SelectionRage: ", selectionRange)
 
         const rect = selectionRange.getBoundingClientRect()
         return {
@@ -264,15 +273,9 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
                     display: isCardVisible ? "block" : "none",
                     pointerEvents: isCardVisible ? "auto" : "none"
                 }}>
-                <button className={styles.closeBtn} onClick={handleClose}>
+                {/*<button className={styles.closeBtn} onClick={handleClose}>
                     ×
-                </button>
-
-                <div className={styles.originalText}>
-                    {truncateText(selectedText, MAX_TEXT_LENGTH)}
-                </div>
-
-                <div className={styles.divider} />
+                </button>*/}
 
                 <div
                     className={`${styles.translatedText} ${error ? styles.error : ""}`}>

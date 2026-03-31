@@ -35,6 +35,8 @@ export async function translate(
     to: string
 ): Promise<string> {
     try {
+        console.log("Text translate: ", text)
+
         const requestBody: ReversoRequestBody = {
             input: text,
             from,
@@ -70,7 +72,8 @@ export async function translate(
             throw new ReversoEmptyResponseError()
         }
 
-        return data.translation[0]
+        // return data.translation[0]
+        return data.translation.join(" ")
     } catch (error) {
         if (error instanceof ReversoTranslationError) {
             throw error

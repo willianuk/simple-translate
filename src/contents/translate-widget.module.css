@@ -70,7 +70,7 @@
 }
 
 .translatedText {
-    padding: 12px;
+    padding: 32px 12px 12px 12px;
     color: #667eea;
     font-weight: 500;
     word-wrap: break-word;
