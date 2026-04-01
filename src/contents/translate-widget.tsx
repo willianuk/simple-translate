@@ -3,6 +3,7 @@ import type { PlasmoCSConfig, PlasmoGetStyle } from "plasmo"
 import { useCallback, useEffect, useState } from "react"
 
 import { sendToBackground } from "@plasmohq/messaging"
+import { Storage } from "@plasmohq/storage"
 
 import type { TextSegment, TranslateRequest, TranslateResponse } from "../types"
 import { MAX_TEXT_LENGTH } from "../utils/constants"
@@ -24,7 +25,10 @@ export const getShadowHostId = () => "st-translate-host"
 
 export const getStyle: PlasmoGetStyle = () => {
     const style = document.createElement("style")
-    style.textContent = styleText
+    style.textContent = `
+        @import url("https://cdn.jsdelivr.net/npm/meslo-font@1.0.1/meslo-lg.css");
+        ${styleText}
+    `
     return style
 }
 
@@ -42,6 +46,28 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
     const [translatedSegments, setTranslatedSegments] = useState<string[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [theme, setTheme] = useState<"light" | "dark">("light")
+
+    useEffect(() => {
+        const storage = new Storage()
+
+        const loadTheme = async () => {
+            const savedTheme = await storage.get("theme")
+            setTheme((savedTheme as "light" | "dark") ?? "light")
+        }
+
+        loadTheme()
+
+        const checkThemeInterval = setInterval(async () => {
+            const savedTheme = await storage.get("theme")
+            const newTheme = (savedTheme as "light" | "dark") ?? "light"
+            setTheme((prev) => (prev !== newTheme ? newTheme : prev))
+        }, 500)
+
+        return () => {
+            clearInterval(checkThemeInterval)
+        }
+    }, [])
 
     const hideAll = useCallback(() => {
         setIsIconVisible(false)
@@ -294,6 +320,7 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
         <>
             <div
                 data-icon
+                data-theme={theme}
                 className={styles.icon}
                 style={{
                     left: `${iconPos.left}px`,
@@ -308,6 +335,7 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
 
             <div
                 data-card
+                data-theme={theme}
                 className={styles.card}
                 style={{
                     left: `${cardPos.left}px`,
