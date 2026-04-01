@@ -61,17 +61,10 @@ body {
     min-height: 100%;
 }
 
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 28px;
-}
-
 .title {
     font-size: 22px;
     font-weight: 700;
-    margin: 0;
+    margin: 0 0 28px;
     text-align: center;
     background: var(--primary-gradient);
     -webkit-background-clip: text;
@@ -91,31 +84,81 @@ body {
     border-radius: 2px;
 }
 
-.theme-toggle {
+.theme-toggle-container {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    border: 2px solid var(--border-color);
+    justify-content: space-between;
+    margin-top: 24px;
+    padding: 16px;
+    background: var(--card-bg);
     border-radius: var(--radius-md);
-    background-color: var(--card-bg);
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: var(--transition);
     box-shadow: var(--shadow-sm);
 }
 
-.theme-toggle:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
+.theme-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.theme-toggle:active {
-    transform: translateY(0);
+.icon-theme {
+    width: 22px;
+    height: 22px;
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+}
+
+.theme-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-transform: capitalize;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-color);
+    border-radius: 26px;
+    transition: 0.3s;
+}
+
+.switch-slider::before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.switch input:checked + .switch-slider {
+    background: var(--primary-gradient);
+}
+
+.switch input:checked + .switch-slider::before {
+    transform: translateX(24px);
 }
 
 .form-group {
@@ -212,8 +255,12 @@ body {
     animation-delay: 0.15s;
 }
 
-.saved-message {
+.theme-toggle-container {
     animation-delay: 0.2s;
+}
+
+.saved-message {
+    animation-delay: 0.25s;
 }
 
 @keyframes slideUp {

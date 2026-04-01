@@ -58,14 +58,18 @@ export default function TranslateWidget({ onClose }: TranslateWidgetProps) {
 
         loadTheme()
 
-        const checkThemeInterval = setInterval(async () => {
-            const savedTheme = await storage.get("theme")
-            const newTheme = (savedTheme as "light" | "dark") ?? "light"
-            setTheme((prev) => (prev !== newTheme ? newTheme : prev))
-        }, 500)
+        storage.watch({
+            theme: (change) => {
+                const newTheme =
+                    (change.newValue as "light" | "dark") ?? "light"
+                setTheme(newTheme)
+            }
+        })
 
         return () => {
-            clearInterval(checkThemeInterval)
+            storage.unwatch({
+                theme: () => {}
+            })
         }
     }, [])
 
