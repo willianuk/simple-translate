@@ -21,6 +21,8 @@ const handler: PlasmoMessaging.MessageHandler<
 
     const trimmedText = text.trim()
 
+    console.log("Trimmed Text Backgound: ", trimmedText)
+
     if (trimmedText.length === 0) {
         response.send({ error: "El texto no puede estar vacío" })
         return

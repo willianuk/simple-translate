@@ -2,13 +2,9 @@ import { useEffect, useState } from "react"
 
 import { useStorage } from "@plasmohq/storage/hook"
 
-import { IconMoon } from "./icons/IconMoon"
-import { IconSun } from "./icons/IconSun"
-import {
-    DEFAULT_FROM_LANG,
-    DEFAULT_TO_LANG,
-    LANGUAGES
-} from "./utils/constants"
+import { LanguageSelector } from "./components/LanguageSelector"
+import { ThemeToggle } from "./components/ThemeToggle"
+import { DEFAULT_FROM_LANG, DEFAULT_TO_LANG } from "./utils/constants"
 
 import "./popup.css"
 
@@ -52,52 +48,21 @@ function IndexPopup() {
         <div className="popup-container">
             <h1 className="title">Simple Translate</h1>
 
-            <div className="form-group">
-                <label htmlFor="from-lang">Idioma de origen:</label>
-                <select
-                    id="from-lang"
-                    value={fromLang}
-                    onChange={handleFromChange}>
-                    {LANGUAGES.map((lang) => (
-                        <option key={lang.code} value={lang.code}>
-                            {lang.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
+            <LanguageSelector
+                id="from-lang"
+                label="Idioma de origen:"
+                value={fromLang}
+                onChange={handleFromChange}
+            />
 
-            <div className="form-group">
-                <label htmlFor="to-lang">Idioma de destino:</label>
-                <select id="to-lang" value={toLang} onChange={handleToChange}>
-                    {LANGUAGES.map((lang) => (
-                        <option key={lang.code} value={lang.code}>
-                            {lang.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
+            <LanguageSelector
+                id="to-lang"
+                label="Idioma de destino:"
+                value={toLang}
+                onChange={handleToChange}
+            />
 
-            <div className="theme-toggle-container">
-                <div className="theme-info">
-                    {theme === "light" ? (
-                        <IconSun className="icon-theme" />
-                    ) : (
-                        <IconMoon className="icon-theme" />
-                    )}
-                    <span className="theme-name">
-                        {theme === "light" ? "Light" : "Dark"}
-                    </span>
-                </div>
-                <label className="switch">
-                    <input
-                        type="checkbox"
-                        checked={theme === "dark"}
-                        onChange={toggleTheme}
-                        aria-label={`Cambiar a modo ${theme === "light" ? "oscuro" : "claro"}`}
-                    />
-                    <span className="switch-slider"></span>
-                </label>
-            </div>
+            <ThemeToggle theme={theme} onToggle={toggleTheme} />
 
             {saved && <p className="saved-message">✓ Configuración guardada</p>}
         </div>

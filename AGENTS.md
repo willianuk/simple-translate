@@ -1,6 +1,6 @@
 # AGENTS.md — Simple Translate Extension
 
-This file provides guidance for agentic coding agents operating in this repository.
+Guidance for agentic coding agents operating in this repository.
 
 ## Project Overview
 
@@ -12,20 +12,11 @@ This file provides guidance for agentic coding agents operating in this reposito
 ## Build Commands
 
 ```bash
-# Development (hot reload)
-pnpm dev
-
-# Production build
-pnpm build
-
-# Package for distribution
-pnpm package
-
-# Lint code
-pnpm lint
-
-# Format code
-pnpm prettier --write .
+pnpm dev        # Development (hot reload)
+pnpm build      # Production build
+pnpm package    # Package for distribution
+pnpm lint       # Lint code
+pnpm prettier --write .  # Format code
 ```
 
 **Note**: No test framework is configured. Tests are not expected.
@@ -46,10 +37,6 @@ Configuration in `.prettierrc.mjs`:
 | Trailing commas   | None  |
 | Bracket spacing   | Yes   |
 | Bracket same line | Yes   |
-
-### ESLint
-
-Configuration in `eslint.config.mjs` uses TypeScript ESLint with recommended rules.
 
 ### Import Order
 
@@ -91,11 +78,7 @@ Imports must follow this order (enforced by `@ianvs/prettier-plugin-sort-imports
 -   Log errors with context: `console.error("Module: Error", error)`
 -   Use custom error classes for different error types
 -   Display user-friendly error messages in UI
--   Respond with error field in message responses:
-
-```typescript
-response.send({ error: "User-friendly message" })
-```
+-   Respond with error field in message responses: `{ error: "User-friendly message" }`
 
 ### Storage (`@plasmohq/storage`)
 
@@ -109,41 +92,39 @@ Use `@plasmohq/storage` instead of raw `chrome.storage` APIs.
 
 ```
 ├── src/
-│   ├── api/              # API modules (e.g., reverso.ts)
-│   ├── background/
-│   │   └── messages/     # Message handlers
-│   ├── contents/         # Content scripts (translate-widget.tsx)
-│   ├── popup.tsx         # Extension popup UI
-│   ├── services/         # Storage and API services
+│   ├── background/       # Background service worker
+│   │   ├── index.ts      # Entry point
+│   │   └── messages/     # Message handlers (e.g., translate.ts)
+│   ├── components/       # Shared React components
+│   ├── contents/         # Content scripts
+│   │   ├── components/   # Content script React components
+│   │   ├── hooks/        # Custom hooks (useTranslation, useSelection, etc.)
+│   │   ├── utils/        # Position calculation utilities
+│   │   └── translate-widget.tsx
+│   ├── icons/            # SVG icon components
+│   ├── services/         # API services (reverso.ts, storage.ts)
 │   ├── types/            # TypeScript interfaces
-│   └── utils/            # Constants and DOM utilities
+│   ├── utils/            # Constants and DOM utilities
+│   ├── popup.tsx         # Extension popup UI
+│   └── popup.css         # Popup styles
 ├── assets/               # Static assets (icons, images)
-├── popup.css             # Popup styles
-└── .plasmo/              # Plasmo generated files
+└── .plasmo/              # Plasmo generated files (do not edit)
 ```
 
 ## Development Workflow
 
-### Running the Extension
-
 1. **Development mode**: `pnpm dev` → load from `build/chrome-mv3-dev`
 2. **Production build**: `pnpm build` → output in `build/chrome-mv3`
 3. **Package**: `pnpm package` → creates distributable ZIP
-
-### Code Quality
-
--   **Format before committing**: `pnpm prettier --write .`
--   **Lint before committing**: `pnpm lint`
--   Type checking is built into the build process via TypeScript
--   **No test framework** — tests are not expected
+4. **Code quality**: `pnpm lint` and `pnpm prettier --write .`
 
 ## Common Tasks
 
-### Adding a new API endpoint
+### Adding a new API service
 
 1. Create file in `src/services/<name>.ts`
 2. Export custom error class extending `Error`
-3. Export async `translate()` function returning translation string
+3. Export async function (e.g., `translate()`) returning result string
 4. Use proper error handling with try/catch
 5. Log errors with contextual messages
 
@@ -153,7 +134,7 @@ Edit `popup.tsx` — it's a React component. Styles go in `popup.css`.
 
 ### Adding content script widget
 
-Create `src/contents/<name>.tsx`. Use CSS modules (`.module.css`).
+Create/modify `src/contents/translate-widget.tsx`. Use CSS modules (`.module.css`).
 
 ### Working with messaging
 
