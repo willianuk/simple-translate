@@ -1,6 +1,8 @@
 # Simple Translate
 
-A simple, open-source browser extension for translating selected text on any webpage. Powered by the [Reverso](https://www.reverso.net/) translation API.
+A simple, open-source browser extension for translating selected text on any webpage. Powered by the Reverso translation API.
+
+Available for Chrome and Firefox.
 
 The goal is to provide a lightweight translator without unnecessary options — just select, click, and read.
 
@@ -65,7 +67,7 @@ Open the extension popup to change source/target language or toggle the theme.
 -   [Plasmo](https://docs.plasmo.com/) — Browser extension framework
 -   [React 18](https://react.dev/) — UI library
 -   [TypeScript](https://www.typescriptlang.org/) — Type safety
--   [Reverso API](https://api.reverso.net/) — Translation service
+-   Reverso API — Translation service
 
 ## Project Structure
 
