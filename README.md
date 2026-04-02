@@ -1,33 +1,94 @@
-This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
+# Simple Translate
 
-## Getting Started
+A simple, open-source browser extension for translating selected text on any webpage. Powered by the [Reverso](https://www.reverso.net/) translation API.
 
-First, run the development server:
+The goal is to provide a lightweight translator without unnecessary options — just select, click, and read.
+
+![Extension Icon](assets/icon.png)
+
+## Features
+
+-   **Instant translation** — select text on any page, click the floating icon, and get a translation card
+-   **Multi-language support** — English, Spanish, French, German, Italian, Portuguese
+-   **Theme toggle** — light and dark mode
+-   **Persistent settings** — language preferences saved automatically
+-   **Clean UI** — minimal, readable design with subtle animations
+
+## Installation
+
+### From source
 
 ```bash
+# Clone the repository
+git clone https://github.com/your-username/simple-translate.git
+cd simple-translate
+
+# Install dependencies
+pnpm install
+
+# Start development server
 pnpm dev
-# or
-npm run dev
 ```
 
-Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
+Then load the extension from `build/chrome-mv3-dev` in your browser's extension manager.
 
-You can start editing the popup by modifying `popup.tsx`. It should auto-update as you make changes. To add an options page, simply add a `options.tsx` file to the root of the project, with a react component default exported. Likewise to add a content page, add a `content.ts` file to the root of the project, importing some module and do some logic, then reload the extension on your browser.
-
-For further guidance, [visit our Documentation](https://docs.plasmo.com/)
-
-## Making production build
-
-Run the following:
+### Production build
 
 ```bash
 pnpm build
-# or
-npm run build
+pnpm package
 ```
 
-This should create a production bundle for your extension, ready to be zipped and published to the stores.
+The distributable ZIP will be in the `build/` directory.
 
-## Submit to the webstores
+## Usage
 
-The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!
+1. Select any text on a webpage
+2. Click the translate icon that appears near your selection
+3. Read the translation in the popup card
+
+Open the extension popup to change source/target language or toggle the theme.
+
+## Supported Languages
+
+| Code  | Language   |
+| ----- | ---------- |
+| `eng` | English    |
+| `spa` | Spanish    |
+| `fra` | French     |
+| `ger` | German     |
+| `ita` | Italian    |
+| `por` | Portuguese |
+
+## Tech Stack
+
+-   [Plasmo](https://docs.plasmo.com/) — Browser extension framework
+-   [React 18](https://react.dev/) — UI library
+-   [TypeScript](https://www.typescriptlang.org/) — Type safety
+-   [Reverso API](https://api.reverso.net/) — Translation service
+
+## Project Structure
+
+```
+src/
+├── background/          # Service worker
+├── contents/            # Content scripts (widget, hooks, components)
+├── services/            # API clients (reverso.ts)
+├── components/          # Shared React components
+├── types/               # TypeScript interfaces
+└── popup.tsx            # Extension popup UI
+```
+
+## Development
+
+```bash
+pnpm dev          # Start dev server with hot reload
+pnpm build        # Production build
+pnpm package      # Create distributable ZIP
+pnpm lint         # Lint code
+pnpm prettier --write .  # Format code
+```
+
+## License
+
+MIT
