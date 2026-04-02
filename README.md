@@ -22,7 +22,7 @@ The goal is to provide a lightweight translator without unnecessary options — 
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/simple-translate.git
+git clone https://github.com/willianuk/simple-translate.git
 cd simple-translate
 
 # Install dependencies
