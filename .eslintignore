@@ -1,0 +1,28 @@
+# Plasmo generated files
+.plasmo/
+build/
+dist/
+out/
+
+# Dependencies
+node_modules/
+
+# Coverage
+coverage/
+
+# Test setup
+src/__tests__/setup.ts
+
+# Config files
+*.config.*
+*.mjs
+*.cjs
+
+# TypeScript declarations
+**/*.d.ts
+
+# Environment files
+vite-env.d.ts
+
+# Static assets
+assets/

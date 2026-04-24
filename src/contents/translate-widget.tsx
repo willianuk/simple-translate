@@ -1,18 +1,20 @@
-import styleText from "data-text:./translate-widget.module.css"
+import cssText from "data-text:./translate-widget.module.css"
 import type { PlasmoCSConfig, PlasmoGetStyle } from "plasmo"
 import { useCallback, useState } from "react"
 
-import TranslateCard from "./components/TranslateCard"
-import TranslateIcon from "./components/TranslateIcon"
-import { useClickOutside } from "./hooks/useClickOutside"
-import { useKeyboardShortcut } from "./hooks/useKeyboardShortcut"
-import { useSelection } from "./hooks/useSelection"
-import { useTheme } from "./hooks/useTheme"
-import { useTranslation } from "./hooks/useTranslation"
+import TranslateCard from "~/contents/components/TranslateCard"
+import TranslateIcon from "~/contents/components/TranslateIcon"
+import { useClickOutside } from "~/contents/hooks/useClickOutside"
+import { useKeyboardShortcut } from "~/contents/hooks/useKeyboardShortcut"
+import { useSelection } from "~/contents/hooks/useSelection"
+import { useTheme } from "~/contents/hooks/useTheme"
+import { useTranslation } from "~/contents/hooks/useTranslation"
 import {
     calculateCardPosition,
     calculateIconPosition
-} from "./utils/calculatePosition"
+} from "~/contents/utils/calculatePosition"
+
+// import * as styles from "./translate-widget.module.css"
 
 export const config: PlasmoCSConfig = {
     matches: ["<all_urls>"],
@@ -23,11 +25,7 @@ export const getShadowHostId = () => "st-translate-host"
 
 export const getStyle: PlasmoGetStyle = () => {
     const style = document.createElement("style")
-    style.textContent = `
-        @import url("https://cdn.jsdelivr.net/npm/meslo-font@1.0.1/meslo-lg.css");
-        @import url("https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Manrope:wght@400;500;600;700&display=swap");
-        ${styleText}
-    `
+    style.textContent = cssText
     return style
 }
 

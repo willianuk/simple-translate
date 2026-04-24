@@ -6,7 +6,7 @@ Available for Chrome and Firefox.
 
 The goal is to provide a lightweight translator without unnecessary options — just select, click, and read.
 
-![Extension Icon](assets/icon.png)
+![Extension Icon](assets/icon-front.png)
 
 ## Features
 
