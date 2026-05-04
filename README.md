@@ -18,6 +18,12 @@ The goal is to provide a lightweight translator without unnecessary options — 
 
 ## Installation
 
+### From releases
+
+Coming soon! We'll add downloadable ZIP files to [Releases](https://github.com/willianuk/simple-translate/releases) so you can install without building from source.
+
+Once available, simply download the ZIP, extract it, and load the unpacked extension in your browser's extension manager.
+
 ### From source
 
 ```bash
