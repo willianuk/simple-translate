@@ -1,3 +1,10 @@
+# [0.2.0-next.2](https://github.com/willianuk/simple-translate/compare/v0.2.0-next.1...v0.2.0-next.2) (2026-05-05)
+
+
+### Features
+
+* add semantic-release validation workflow ([c009aa7](https://github.com/willianuk/simple-translate/commit/c009aa7afda3e159e3ded3de75626a6f40a021d3))
+
 # [0.2.0-next.1](https://github.com/willianuk/simple-translate/compare/v0.1.0...v0.2.0-next.1) (2026-05-04)
 
 
