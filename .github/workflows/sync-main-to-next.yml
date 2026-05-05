@@ -9,6 +9,7 @@ jobs:
     sync:
         name: Sync main to next
         runs-on: ubuntu-latest
+        if: "!contains(github.event.head_commit.message, '[skip ci]')"
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -26,7 +27,7 @@ jobs:
                   git fetch origin next
                   git checkout next
 
-                  if git merge origin/main --no-edit; then
+                  if git merge origin/main --no-edit -m "chore: sync main to next [skip ci]"; then
                       echo "✅ Merge successful - pushing to next"
                       git push origin next
                   else
@@ -43,23 +44,22 @@ jobs:
                           --head "$BRANCH_NAME" \
                           --title "🔄 chore: sync main to next (conflicts detected)" \
                           --body "⚠️ **Automated sync from main to next detected conflicts.**
+                          **What happened:**
+                          - A release was published to \`main\`
+                          - Attempted to sync changes to \`next\`
+                          - Merge conflicts were detected (likely in CHANGELOG.md)
 
-                  **What happened:**
-                  - A release was published to \`main\`
-                  - Attempted to sync changes to \`next\`
-                  - Merge conflicts were detected (likely in CHANGELOG.md)
+                          **What to do:**
+                          1. Review the conflicts in this PR
+                          2. Resolve them manually (usually just combining both CHANGELOGs)
+                          3. Merge this PR
 
-                  **What to do:**
-                  1. Review the conflicts in this PR
-                  2. Resolve them manually (usually just combining both CHANGELOGs)
-                  3. Merge this PR
+                          **Files with conflicts:**
+                          \`\`\`
+                          $(git diff --name-only --diff-filter=U)
+                          \`\`\`
 
-                  **Files with conflicts:**
-                  \`\`\`
-                  $(git diff --name-only --diff-filter=U)
-                  \`\`\`
-
-                  🤖 This PR was created automatically by the sync workflow."
+                          🤖 This PR was created automatically by the sync workflow."
 
                       exit 0
                   fi

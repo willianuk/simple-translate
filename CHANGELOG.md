@@ -1,3 +1,10 @@
+## [0.4.1-next.1](https://github.com/willianuk/simple-translate/compare/v0.4.0...v0.4.1-next.1) (2026-05-05)
+
+
+### Bug Fixes
+
+* prevent infinite loop in sync and release workflows ([850f31a](https://github.com/willianuk/simple-translate/commit/850f31aec48df6201f206cc0b4e8a1b26ae5c8b7))
+
 # [0.4.0](https://github.com/willianuk/simple-translate/compare/v0.3.0...v0.4.0) (2026-05-05)
 
 
