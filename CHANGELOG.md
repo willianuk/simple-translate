@@ -1,3 +1,10 @@
+## [0.4.2-next.1](https://github.com/willianuk/simple-translate/compare/v0.4.1...v0.4.2-next.1) (2026-05-05)
+
+
+### Bug Fixes
+
+* remove skip ci check from sync workflow ([87e9676](https://github.com/willianuk/simple-translate/commit/87e967688a1c69eeb786c366d67e77489c986014))
+
 ## [0.4.1](https://github.com/willianuk/simple-translate/compare/v0.4.0...v0.4.1) (2026-05-05)
 
 
