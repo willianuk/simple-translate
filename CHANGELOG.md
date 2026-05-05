@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/willianuk/simple-translate/compare/v0.3.0...v0.4.0) (2026-05-05)
+
+
+### Features
+
+* add automatic sync from main to next workflow ([e11ff2d](https://github.com/willianuk/simple-translate/commit/e11ff2d8361bb953249d1334d95b265dcc991b04))
+
 # [0.4.0-next.1](https://github.com/willianuk/simple-translate/compare/v0.3.0...v0.4.0-next.1) (2026-05-05)
 
 
