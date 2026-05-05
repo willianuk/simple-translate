@@ -1,0 +1,65 @@
+name: Sync Main to Next
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    sync:
+        name: Sync main to next
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  token: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
+
+            - name: Sync branches
+              env:
+                  GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+
+                  git fetch origin next
+                  git checkout next
+
+                  if git merge origin/main --no-edit; then
+                      echo "✅ Merge successful - pushing to next"
+                      git push origin next
+                  else
+                      echo "⚠️ Merge conflict detected - creating PR"
+                      git merge --abort
+
+                      BRANCH_NAME="sync/main-to-next-$(date +%s)"
+                      git checkout -b "$BRANCH_NAME"
+                      git merge origin/main --no-edit || true
+                      git push origin "$BRANCH_NAME"
+
+                      gh pr create \
+                          --base next \
+                          --head "$BRANCH_NAME" \
+                          --title "🔄 chore: sync main to next (conflicts detected)" \
+                          --body "⚠️ **Automated sync from main to next detected conflicts.**
+
+                  **What happened:**
+                  - A release was published to \`main\`
+                  - Attempted to sync changes to \`next\`
+                  - Merge conflicts were detected (likely in CHANGELOG.md)
+
+                  **What to do:**
+                  1. Review the conflicts in this PR
+                  2. Resolve them manually (usually just combining both CHANGELOGs)
+                  3. Merge this PR
+
+                  **Files with conflicts:**
+                  \`\`\`
+                  $(git diff --name-only --diff-filter=U)
+                  \`\`\`
+
+                  🤖 This PR was created automatically by the sync workflow."
+
+                      exit 0
+                  fi
