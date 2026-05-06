@@ -36,6 +36,22 @@ jobs:
               run: pnpm install --frozen-lockfile
 
             - name: Release
+              id: semantic
               env:
                   GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
               run: npx semantic-release
+
+            - name: Build and Package Extensions
+              if: steps.semantic.outputs.new_release_published == 'true'
+              run: pnpm package:all
+
+            - name: Upload Release Assets
+              if: steps.semantic.outputs.new_release_published == 'true'
+              uses: softprops/action-gh-release@v2
+              with:
+                  tag_name: v${{ steps.semantic.outputs.new_release_version }}
+                  files: |
+                      build/chrome-mv3-prod.zip
+                      build/firefox-mv3-prod.zip
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
