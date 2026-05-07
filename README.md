@@ -18,10 +18,12 @@ The goal is to provide a lightweight translator without unnecessary options — 
 
 ## Installation
 
-### From releases
+### 📦 Download from [Releases](https://github.com/willianuk/simple-translate/releases)
 
-> [!NOTE]
-> Downloadable extensions are available in [Releases](https://github.com/willianuk/simple-translate/releases).
+| Browser | Download |
+|---------|----------|
+| Chrome  | [chrome-mv3-prod.zip](https://github.com/willianuk/simple-translate/releases/latest/download/chrome-mv3-prod.zip) |
+| Firefox | [firefox-mv3-prod.zip](https://github.com/willianuk/simple-translate/releases/latest/download/firefox-mv3-prod.zip) |
 
 ### From source
 
