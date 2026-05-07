@@ -8,6 +8,7 @@
     },
     "description": "simple translate",
     "author": "will",
+    "license": "MIT",
     "scripts": {
         "dev": "plasmo dev",
         "build": "plasmo build",
