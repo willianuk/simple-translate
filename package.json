@@ -1,13 +1,14 @@
 {
     "name": "simple-translate",
     "displayName": "Simple translate",
-    "version": "0.4.5",
+    "version": "0.5.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/willianuk/simple-translate.git"
     },
     "description": "simple translate",
     "author": "will",
+    "license": "MIT",
     "scripts": {
         "dev": "plasmo dev",
         "build": "plasmo build",
