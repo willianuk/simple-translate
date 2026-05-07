@@ -37,9 +37,13 @@ jobs:
 
             - name: Release
               id: semantic
+              uses: cycjimmy/semantic-release-action@v4
               env:
                   GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
-              run: npx semantic-release
+
+            - name: Pull updated package.json
+              if: steps.semantic.outputs.new_release_published == 'true'
+              run: git pull origin ${{ github.ref_name }}
 
             - name: Build and Package Extensions
               if: steps.semantic.outputs.new_release_published == 'true'
@@ -54,4 +58,4 @@ jobs:
                       build/chrome-mv3-prod.zip
                       build/firefox-mv3-prod.zip
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
