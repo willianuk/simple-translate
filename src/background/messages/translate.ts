@@ -1,9 +1,11 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
-import { translate } from "../../services/reverso"
-import { getFromLang, getToLang } from "../../services/storage"
-import type { TranslateRequest, TranslateResponse } from "../../types"
-import { MAX_TEXT_LENGTH } from "../../utils/constants"
+import { BackgroundError, ErrorCode } from "~/background/shared/errors"
+import { createLogger } from "~/background/shared/logger"
+import type { TranslateRequest, TranslateResponse } from "~/types"
+
+import { formatErrorResponse, formatSuccessResponse } from "~/background/translate/format"
+import { orchestrateTranslation } from "~/background/translate/orchestrate"
 
 type HandlerRequest = PlasmoMessaging.Request<"translate", TranslateRequest>
 type HandlerResponse = PlasmoMessaging.Response<TranslateResponse>
@@ -12,40 +14,35 @@ const handler: PlasmoMessaging.MessageHandler<
     TranslateRequest,
     TranslateResponse
 > = async (request: HandlerRequest, response: HandlerResponse) => {
-    const { text, fromLang, toLang } = request.body ?? {}
-
-    if (!text || typeof text !== "string") {
-        response.send({ error: "El texto no puede estar vacío" })
-        return
-    }
-
-    const trimmedText = text.trim()
-
-    console.log("Trimmed Text Backgound: ", trimmedText)
-
-    if (trimmedText.length === 0) {
-        response.send({ error: "El texto no puede estar vacío" })
-        return
-    }
-
-    if (trimmedText.length > MAX_TEXT_LENGTH) {
-        response.send({
-            error: `El texto excede el límite de ${MAX_TEXT_LENGTH} caracteres`
-        })
-        return
-    }
+    const logger = createLogger("translate-handler")
 
     try {
-        const from = fromLang ?? (await getFromLang())
-        const to = toLang ?? (await getToLang())
-
-        console.log("Backgound trimed text: ", trimmedText)
-
-        const translatedText = await translate(trimmedText, from, to)
-        response.send({ translatedText })
+        const result = await orchestrateTranslation(request.body, logger)
+        response.send(formatSuccessResponse(result))
     } catch (error) {
-        console.error("Background: Translation error", error)
-        response.send({ error: "Error de traducción" })
+        if (error instanceof BackgroundError) {
+            logger.error("Translation failed", error, {
+                code: error.context.code,
+                retryable: error.context.retryable
+            })
+            response.send(formatErrorResponse(error))
+        } else {
+            logger.error("Unexpected error in handler", error)
+            response.send(
+                formatErrorResponse(
+                    new BackgroundError({
+                        code: ErrorCode.UNKNOWN_ERROR,
+                        userMessage: "Error inesperado",
+                        technicalMessage:
+                            error instanceof Error
+                                ? error.message
+                                : String(error),
+                        recoverable: false,
+                        retryable: false
+                    })
+                )
+            )
+        }
     }
 }
 
