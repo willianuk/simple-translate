@@ -39,7 +39,5 @@ export interface TranslateRequest {
     toLang?: string
 }
 
-export interface TranslateResponse {
-    translatedText?: string
-    error?: string
-}
+// Re-export from background types
+export type { TranslateResponse, ErrorCode } from "~/background/types"

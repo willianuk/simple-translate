@@ -2,13 +2,8 @@ import { useCallback, useState } from "react"
 
 import { sendToBackground } from "@plasmohq/messaging"
 
-import type {
-    TextSegment,
-    TranslateRequest,
-    TranslateResponse
-} from "../../types"
-import { MAX_TEXT_LENGTH } from "../../utils/constants"
-import { getSelectionSegments, isOffline, truncateText } from "../../utils/dom"
+import type { TextSegment, TranslateRequest, TranslateResponse } from "../../types"
+import { getSelectionSegments, isOffline } from "../../utils/dom"
 
 interface UseTranslationProps {
     selectedText: string
@@ -63,15 +58,13 @@ export function useTranslation({
                     body: { text: combinedText }
                 })
 
-                // console.log("response: ", response)
-
-                if (response.error) {
+                if (!response.success) {
                     setError(response.error)
                     setTranslatedText("Error de traducción")
                     setTextSegments([])
                     setTranslatedSegments([])
                 } else {
-                    const translatedParts = (response.translatedText || "")
+                    const translatedParts = response.translatedText
                         .split(DELIMITER)
                         .map((part) => part.trim())
 
@@ -80,24 +73,19 @@ export function useTranslation({
                     setTranslatedText("")
                 }
             } else {
-                const textToTranslate = truncateText(
-                    selectedText,
-                    MAX_TEXT_LENGTH
-                )
-
                 const response = await sendToBackground<
                     TranslateRequest,
                     TranslateResponse
                 >({
                     name: "translate",
-                    body: { text: textToTranslate }
+                    body: { text: selectedText }
                 })
 
-                if (response.error) {
+                if (!response.success) {
                     setError(response.error)
                     setTranslatedText("Error de traducción")
                 } else {
-                    setTranslatedText(response.translatedText || "")
+                    setTranslatedText(response.translatedText)
                 }
 
                 setTextSegments([])
